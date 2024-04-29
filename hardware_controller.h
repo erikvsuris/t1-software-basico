@@ -5,7 +5,7 @@
 
 void toggleDisplay(unsigned int *reg);
 void setExhibitionMode(unsigned short int *reg, unsigned int newExhibitionMode);
-void setDisplayUpdateSpeed(unsigned short int *reg);
+void setDisplayUpdateSpeed(unsigned short int *reg, unsigned short int newUpdateSpeed);
 void toggleOperationLED(unsigned short int *reg);
 void setStatusColorRed(unsigned short int *reg);
 void setStatusColorGreen(unsigned short int *reg);
