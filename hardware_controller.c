@@ -108,7 +108,7 @@ Nível da bateria:
 10 = médio
 11 = alto
 */
-void getBatteryLevel(unsigned short int *reg)
+unsigned short int getBatteryLevel(unsigned short int *reg)
 {
 }
 
@@ -116,7 +116,7 @@ void getBatteryLevel(unsigned short int *reg)
 Número de vezes que a mensagem apareceu de
 forma completa no display no modo deslizante
 */
-void timesMessageDisplaySliding(unsigned short int *reg)
+unsigned short int getTimesMessageDisplaySliding(unsigned short int *reg)
 {  
 }
 
@@ -126,7 +126,7 @@ Temperatura atual em graus Celsius vezes 10
 graus). Valores negativos são representados em
 complemento de 2
 */
-void currentCelsiusTemperature(unsigned short int *reg)
+unsigned short int getCurrentCelsiusTemperature(unsigned short int *reg)
 {  
 }
 
