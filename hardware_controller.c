@@ -74,6 +74,62 @@ void setStatusColorBlue(unsigned short int *reg)
    *reg |= 1 << 12;
 }
 
+// Define componente R da color RGB para o display (default: 255).
+void setDisplayRedColor(unsigned short int *reg, unsigned short int redRange)
+{
+    if (newExhibitionMode > 255) return;
+   
+   *reg &= ~(255 << 0);
+   *reg |= (newUpdateSpeed & 255) << 0;
+}
+
+// Define componente G da color RGB para o display (default: 255).
+void setDisplayGreenColor(unsigned short int *reg, runsigned short int greenRange)
+{
+   if (newExhibitionMode > 255) return;
+   
+   *reg &= ~(255 << 8);
+   *reg |= (newUpdateSpeed & 255) << 8;
+}
+
+// Define componente B da color RGB para o display (default: 255).
+void setDisplayBlueColor(unsigned short int *reg, unsigned short int blueRange)
+{
+   if (newExhibitionMode > 255) return;
+   
+   *reg &= ~(255 << 0);
+   *reg |= (newUpdateSpeed & 255) << 0;
+}
+
+/*
+Nível da bateria:
+00 = crítico
+01 = baixo
+10 = médio
+11 = alto
+*/
+void getBatteryLevel(unsigned short int *reg)
+{
+}
+
+/*
+Número de vezes que a mensagem apareceu de
+forma completa no display no modo deslizante
+*/
+void timesMessageDisplaySliding(unsigned short int *reg)
+{  
+}
+
+/*
+Temperatura atual em graus Celsius vezes 10
+(por exemplo, valor decimal 323 representa 32,2
+graus). Valores negativos são representados em
+complemento de 2
+*/
+void currentCelsiusTemperature(unsigned short int *reg)
+{  
+}
+
 // Reseta registradores para padrão de fábrica (default)
 void resetRegisters(unsigned short int *reg)
 {
