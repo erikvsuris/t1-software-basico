@@ -56,16 +56,12 @@ void toggleDisplay(unsigned short int *reg)
     *reg ^= 1;
 }
 
-void defineExhibitionMode(unsigned short int *reg, unsigned short int newExhibitionMode)
+void setExhibitionMode(unsigned short int *reg, unsigned short int newExhibitionMode)
 {
-    if (newExhibitionMode < 0 || newExhibitionMode > 3) return;
+    if (newExhibitionMode > 3) return;
 
-    unsigned short int mask = newExhibitionMode << 2;
-    printf("%04x\n", mask);
-    // short unsigned int bit_1 = 0, bit_2 = 0;
-    
-    // *reg |= (bit_1 << 1);
-    // *reg |= (bit_2 << 2);
+    *reg &= ~(0x03 << 1);
+    *reg |= (newExhibitionMode & 0x03) << 1;
 }
 
 int main() {
@@ -80,8 +76,8 @@ int main() {
     unsigned short *r0 = base_address + 0x00;
     unsigned short *r1 = base_address + 0x02;
 
-    toggleDisplay(r0);
-    defineExhibitionMode(r0, 2);
+    //toggleDisplay(r0);
+    //defineExhibitionMode(r0, 1);
 
     printf("Current value of R0: 0x%02x\n", *r0);
     printf("Current value of R1: 0x%02x\n", *r1);
