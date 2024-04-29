@@ -32,9 +32,13 @@ valores múltiplos de 100 milisegundos para modo
 de exibição não estático (default: 2).
 Exemplo: valor 2 representa 200 ms 
 */
-void setDisplayUpdateSpeed()
+void setDisplayUpdateSpeed(unsigned short int *reg, unsigned short int newUpdateSpeed)
 {
-    
+   if (newExhibitionMode > 63) return;
+   // Verificar se modo de exibição é não estático
+   
+   *reg &= ~(63 << 3);
+   *reg |= (newUpdateSpeed & 63) << 3;
 }
 
 // Liga/Desliga o LED de operação (default: 0)
@@ -71,6 +75,6 @@ void setStatusColorBlue(unsigned short int *reg)
 }
 
 // Reseta registradores para padrão de fábrica (default)
-void resetRegisters()
+void resetRegisters(unsigned short int *reg)
 {
 }
