@@ -22,8 +22,8 @@ void setExhibitionMode(unsigned short int *reg, unsigned short int newExhibition
 {
     if (newExhibitionMode > 3) return;
 
-    *reg &= ~(0x03 << 1);
-    *reg |= (newExhibitionMode & 0x03) << 1;
+    *reg &= ~(3 << 1);
+    *reg |= (newExhibitionMode & 3) << 1;
 }
 
 /*
@@ -49,9 +49,25 @@ bit 10 = R
 bit 11 = G
 bit 12 = B
 */
-void toggleStatusLEDColor()
+void setStatusColorRed(unsigned short int *reg)
 {
+   *reg |= 1 << 10;
+   *reg &= 0 << 11;
+   *reg &= 0 << 12;
+}
 
+void setStatusColorGreen(unsigned short int *reg)
+{
+   *reg &= 0 << 10;
+   *reg |= 1 << 11;
+   *reg &= 0 << 12;
+}
+
+void setStatusColorBlue(unsigned short int *reg)
+{
+   *reg &= 0 << 10;
+   *reg &= 0 << 11;
+   *reg |= 1 << 12;
 }
 
 // Reseta registradores para padrão de fábrica (default)
