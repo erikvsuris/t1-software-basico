@@ -51,19 +51,6 @@ int registers_release(void* map, int file_size, int fd) {
     return 0;
 }
 
-void toggleDisplay(unsigned short int *reg)
-{
-    *reg ^= 1;
-}
-
-void setExhibitionMode(unsigned short int *reg, unsigned short int newExhibitionMode)
-{
-    if (newExhibitionMode > 3) return;
-
-    *reg &= ~(0x03 << 1);
-    *reg |= (newExhibitionMode & 0x03) << 1;
-}
-
 int main() {
     int fd;
     // Open the file and map it into memory

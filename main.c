@@ -1,19 +1,22 @@
+#include <stdio.h>
+#include "hardware_controller.h"
+
 int main() {
-    toggleDisplay();
-    defineExhibitionMode(2);
+    // map_register();
+    // map_release();
 
-    short int operation;
-
+    int operation;
     do {
         printf("\n-- CONTROLADOR DE HARDWARE --\n");
         printf("\n1 - Ligar/Desligar o display\n");
-        printf("2 - Selecionar modo de exibição\n");
-        printf("3 - Definir velocidade de atualização\n");
-        printf("4 - Ligar/Desligar o LED de operação\n");
+        printf("2 - Selecionar modo de exibicao\n");
+        printf("3 - Definir velocidade de atualizacao\n");
+        printf("4 - Ligar/Desligar o LED de operacao\n");
         printf("5 - Ligar/Desligar e definir a cor do LED de status\n");
-        printf("6 - Resetar registradores para padrão de fábrica\n");
-        printf("\n0 - Finalizar o programa\n");
-
+        printf("6 - Resetar registradores para padrao de fabrica\n");
+        printf("\n0 - Finalizar o programa\n\n");
+        printf("\nSelecione a operacao que deseja realizar:");
+        scanf("%d", &operation);
         switch (operation)
         {
             case 0:
@@ -41,6 +44,7 @@ int main() {
             default:
                 break;
         }
-
     } while (operation != 0);
+
+    return 0;
 }

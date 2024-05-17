@@ -13,65 +13,66 @@
 int fd;
 char *map;
 
-unsigned short *r0;
-unsigned short *r1;
-unsigned short *r2;
-unsigned short *r3;
-unsigned short *r4;
-unsigned short *r5;
-unsigned short *r6;
-unsigned short *r7;
-unsigned short *r8;
-unsigned short *r9;
-unsigned short *r10;
-unsigned short *r11;
-unsigned short *r12;
-unsigned short *r13;
-unsigned short *r14;
-unsigned short *r15;
+unsigned short int *r0;
+unsigned short int *r1;
+unsigned short int *r2;
+unsigned short int *r3;
+unsigned short int *r4;
+unsigned short int *r5;
+unsigned short int *r6;
+unsigned short int *r7;
+unsigned short int *r8;
+unsigned short int *r9;
+unsigned short int *r10;
+unsigned short int *r11;
+unsigned short int *r12;
+unsigned short int *r13;
+unsigned short int *r14;
+unsigned short int *r15;
 
 // Function to open or create the file and map it into memory
 char* registers_map(const char* file_path, int file_size, int* fd) {
-    *fd = open(file_path, O_RDWR | O_CREAT, 0666);
-    if (*fd == -1) {
-        perror("Error opening or creating file");
-        return NULL;
-    }
+   *fd = open(file_path, O_RDWR | O_CREAT, 0666);
+   if (*fd == -1) {
+      perror("Error opening or creating file");
+      return NULL;
+   }
 
-    // Ensure the file is of the correct size
-    if (ftruncate(*fd, file_size) == -1) {
-        perror("Error setting file size");
-        close(*fd);
-        return NULL;
-    }
+   // Ensure the file is of the correct size
+   if (ftruncate(*fd, file_size) == -1) {
+      perror("Error setting file size");
+      close(*fd);
+      return NULL;
+   }
 
     // Map the file into memory
-    char *map = mmap(0, file_size, PROT_READ | PROT_WRITE, MAP_SHARED, *fd, 0);
-    if (map == MAP_FAILED) {
-        perror("Error mapping file");
-        close(*fd);
-        return NULL;
-    }
+   char *map = mmap(0, file_size, PROT_READ | PROT_WRITE, MAP_SHARED, *fd, 0);
+   if (map == MAP_FAILED) {
+      perror("Error mapping file");
+      close(*fd);
+      return NULL;
+   }
 
    unsigned short *base_address = (unsigned short *)map;
 
-   *r0 = base_address + 0x00;
-   *r1 = base_address + 0x02;
-   *r2 = base_address + 0x04;
-   *r3 = base_address + 0x06;
-   *r4 = base_address + 0x08;
-   *r5 = base_address + 0x0A;
-   *r6 = base_address + 0x0C;
-   *r7 = base_address + 0x0E;
-   *r8 = base_address + 0x10;
-   *r9 = base_address + 0x12;
-   *r10 = base_address + 0x14;
-   *r11 = base_address + 0x16;
-   *r12 = base_address + 0x18;
-   *r13 = base_address + 0x1A;
-   *r14 = base_address + 0x1C;
-   *r15 = base_address + 0x1E;
-    return map;
+   *r0 = *base_address + 0x00;
+   *r1 = *base_address + 0x02;
+   *r2 = *base_address + 0x04;
+   *r3 = *base_address + 0x06;
+   *r4 = *base_address + 0x08;
+   *r5 = *base_address + 0x0A;
+   *r6 = *base_address + 0x0C;
+   *r7 = *base_address + 0x0E;
+   *r8 = *base_address + 0x10;
+   *r9 = *base_address + 0x12;
+   *r10 = *base_address + 0x14;
+   *r11 = *base_address + 0x16;
+   *r12 = *base_address + 0x18;
+   *r13 = *base_address + 0x1A;
+   *r14 = *base_address + 0x1C;
+   *r15 = *base_address + 0x1E;
+
+   return map;
 }
 
 // Function to release mapped memory and file descriptor
@@ -90,16 +91,17 @@ int registers_release(void* map, int file_size, int fd) {
     return 0;
 }
 
-void mapRegister() {
+int map_register() {
    int fd;
    // Open the file and map it into memory
-   *map = registers_map(FILE_PATH, FILE_SIZE, &fd);
+   char *map = registers_map(FILE_PATH, FILE_SIZE, &fd);
    if (map == NULL) {
       return EXIT_FAILURE;
    }
+   return 0;
 }
 
-void mapRelease() {
+int map_release() {
    if (registers_release(map, FILE_SIZE, fd) == -1) {
          return EXIT_FAILURE;
    }
@@ -220,6 +222,7 @@ Nível da bateria:
 */
 unsigned short int getBatteryLevel()
 {
+   return 0;
 }
 
 /*
@@ -228,6 +231,7 @@ forma completa no display no modo deslizante
 */
 unsigned short int getTimesMessageDisplaySliding()
 {  
+   return 0;
 }
 
 /*
@@ -236,11 +240,12 @@ Temperatura atual em graus Celsius vezes 10
 graus). Valores negativos são representados em
 complemento de 2
 */
-unsigned short int getCurrentCelsiusTemperature(unsigned short int *reg)
-{  
+unsigned short int getCurrentCelsiusTemperature()
+{ 
+   return 0;
 }
 
 // Reseta registradores para padrão de fábrica (default)
-void resetRegisters(unsigned short int *reg)
+void resetRegisters()
 {
 }
