@@ -13,22 +13,22 @@
 int fd;
 char *map;
 
-unsigned short int *r0;
-unsigned short int *r1;
-unsigned short int *r2;
-unsigned short int *r3;
-unsigned short int *r4;
-unsigned short int *r5;
-unsigned short int *r6;
-unsigned short int *r7;
-unsigned short int *r8;
-unsigned short int *r9;
-unsigned short int *r10;
-unsigned short int *r11;
-unsigned short int *r12;
-unsigned short int *r13;
-unsigned short int *r14;
-unsigned short int *r15;
+unsigned short *r0;
+unsigned short *r1;
+unsigned short *r2;
+unsigned short *r3;
+unsigned short *r4;
+unsigned short *r5;
+unsigned short *r6;
+unsigned short *r7;
+unsigned short *r8;
+unsigned short *r9;
+unsigned short *r10;
+unsigned short *r11;
+unsigned short *r12;
+unsigned short *r13;
+unsigned short *r14;
+unsigned short *r15;
 
 // Function to open or create the file and map it into memory
 char* registers_map(const char* file_path, int file_size, int* fd) {
@@ -55,28 +55,40 @@ char* registers_map(const char* file_path, int file_size, int* fd) {
 
    unsigned short *base_address = (unsigned short *)map;
 
-   *r0 = *base_address + 0x00;
-   *r1 = *base_address + 0x02;
-   *r2 = *base_address + 0x04;
-   *r3 = *base_address + 0x06;
-   *r4 = *base_address + 0x08;
-   *r5 = *base_address + 0x0A;
-   *r6 = *base_address + 0x0C;
-   *r7 = *base_address + 0x0E;
-   *r8 = *base_address + 0x10;
-   *r9 = *base_address + 0x12;
-   *r10 = *base_address + 0x14;
-   *r11 = *base_address + 0x16;
-   *r12 = *base_address + 0x18;
-   *r13 = *base_address + 0x1A;
-   *r14 = *base_address + 0x1C;
-   *r15 = *base_address + 0x1E;
+   r0 = base_address + 0x00;
+   r1 = base_address + 0x02;
+   r2 = base_address + 0x04;
+   r3 = base_address + 0x06;
+   r4 = base_address + 0x08;
+   r5 = base_address + 0x0A;
+   r6 = base_address + 0x0C;
+   r7 = base_address + 0x0E;
+   r8 = base_address + 0x10;
+   r9 = base_address + 0x12;
+   r11 = base_address + 0x16;
+   r10 = base_address + 0x14;
+   r12 = base_address + 0x18;
+   r13 = base_address + 0x1A;
+   r14 = base_address + 0x1C;
+   r15 = base_address + 0x1E;
 
    return map;
 }
 
+int map_register()
+{
+   int fd;
+   // Open the file and map it into memory
+   char *map = registers_map(FILE_PATH, FILE_SIZE, &fd);
+   if (map == NULL) {
+      return EXIT_FAILURE;
+   }
+   return 0;
+}
+
 // Function to release mapped memory and file descriptor
-int registers_release(void* map, int file_size, int fd) {
+int registers_release(void* map, int file_size, int fd)
+{
     if (munmap(map, file_size) == -1) {
         perror("Error unmapping the file");
         close(fd);
@@ -91,17 +103,8 @@ int registers_release(void* map, int file_size, int fd) {
     return 0;
 }
 
-int map_register() {
-   int fd;
-   // Open the file and map it into memory
-   char *map = registers_map(FILE_PATH, FILE_SIZE, &fd);
-   if (map == NULL) {
-      return EXIT_FAILURE;
-   }
-   return 0;
-}
-
-int map_release() {
+int map_release()
+{
    if (registers_release(map, FILE_SIZE, fd) == -1) {
          return EXIT_FAILURE;
    }
@@ -109,52 +112,52 @@ int map_release() {
    return EXIT_SUCCESS;
 }
 
-/*
-Liga/Desliga o display:
+/* Liga/Desliga o display:
 0 = desligado
-1 = ligado
-*/
-void toggleDisplay()
+1 = ligado */
+unsigned short int get_toggle_display()
 {
-    *r0 ^= 1;
+   return (*r0 >> 0) & 1;
 }
 
-/*
-Seleciona o modo de exibição:
+void set_toggle_display()
+{
+   *r0 ^= 1;
+}
+
+
+/* Seleciona o modo de exibição:
 00 = estático (default)
 01 = deslizante
 10 = piscante
-11 = deslizante/piscante
-*/
-unsigned short int getExhibitionMode(unsigned short int *reg) {
+11 = deslizante/piscante */
+unsigned short get_exhibition_mode()
+{
    return 0;
 }
 
-void setExhibitionMode(unsigned short int newExhibitionMode)
+void set_exhibition_mode(unsigned short newExhibitionMode)
 {
    if (newExhibitionMode > 3) return;
-
    *r0 &= ~(3 << 1);
    *r0 |= (newExhibitionMode & 3) << 1;
 }
-
 /*
 Define velocidade de atualização do display em
 valores múltiplos de 100 milisegundos para modo
 de exibição não estático (default: 2).
 Exemplo: valor 2 representa 200 ms 
 */
-void setDisplayUpdateSpeed(unsigned short int newUpdateSpeed)
+void set_display_update_speed(unsigned short newUpdateSpeed)
 {
    if (newUpdateSpeed > 63) return;
    // Verificar se modo de exibição é não estático
-   
+
    *r0 &= ~(63 << 3);
    *r0 |= (newUpdateSpeed & 63) << 3;
 }
-
 // Liga/Desliga o LED de operação (default: 0)
-void toggleOperationLED()
+void toggle_operation_LED()
 {
    *r0 ^= 1;
 }
@@ -165,54 +168,53 @@ bit 10 = R
 bit 11 = G
 bit 12 = B
 */
-void setStatusColorRed()
+unsigned short get_status_color()
+{
+   return 0;
+}
+
+void set_status_color_red()
 {
    *r0 |= 1 << 10;
    *r0 &= 0 << 11;
    *r0 &= 0 << 12;
 }
-
-void setStatusColorGreen()
+void set_status_color_green()
 {
    *r0 &= 0 << 10;
    *r0 |= 1 << 11;
    *r0 &= 0 << 12;
 }
-
-void setStatusColorBlue()
+void set_status_color_blue()
 {
    *r0 &= 0 << 10;
    *r0 &= 0 << 11;
    *r0 |= 1 << 12;
 }
-
 // Define componente R da color RGB para o display (default: 255).
-void setDisplayRedColor(unsigned short int redRange)
+void set_display_red_color(unsigned short red_range)
 {
-    if (redRange > 255) return;
-   
+    if (red_range > 255) return;
+
    *r1 &= ~(255 << 0);
-   *r1 |= (redRange & 255) << 0;
+   *r1 |= (red_range & 255) << 0;
 }
-
 // Define componente G da color RGB para o display (default: 255).
-void setDisplayGreenColor(unsigned short int greenRange)
+void set_display_green_color(unsigned short green_range)
 {
-   if (greenRange > 255) return;
-   
+   if (green_range > 255) return;
+
    *r1 &= ~(255 << 8);
-   *r1 |= (greenRange & 255) << 8;
+   *r1 |= (green_range & 255) << 8;
 }
-
 // Define componente B da color RGB para o display (default: 255).
-void setDisplayBlueColor(unsigned short int blueRange)
+void set_display_blue_color(unsigned short blue_range)
 {
-   if (blueRange > 255) return;
-   
-   *r2 &= ~(255 << 0);
-   *r2 |= (blueRange & 255) << 0;
-}
+   if (blue_range > 255) return;
 
+   *r2 &= ~(255 << 0);
+   *r2 |= (blue_range & 255) << 0;
+}
 /*
 Nível da bateria:
 00 = crítico
@@ -220,16 +222,15 @@ Nível da bateria:
 10 = médio
 11 = alto
 */
-unsigned short int getBatteryLevel()
+unsigned short get_battery_level()
 {
    return 0;
 }
-
 /*
 Número de vezes que a mensagem apareceu de
 forma completa no display no modo deslizante
 */
-unsigned short int getTimesMessageDisplaySliding()
+unsigned short get_sliding_message_times()
 {  
    return 0;
 }
@@ -240,12 +241,12 @@ Temperatura atual em graus Celsius vezes 10
 graus). Valores negativos são representados em
 complemento de 2
 */
-unsigned short int getCurrentCelsiusTemperature()
+unsigned short get_current_celsius_temperature()
 { 
    return 0;
 }
-
 // Reseta registradores para padrão de fábrica (default)
-void resetRegisters()
+void reset_registers()
 {
+   *r0 &= 0;
 }

@@ -4,7 +4,6 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <sys/stat.h>
-// #include "hardware_controller.h"
 
 #define FILE_PATH "registers.bin"
 #define FILE_SIZE 1024  // Same size as used in the first program
