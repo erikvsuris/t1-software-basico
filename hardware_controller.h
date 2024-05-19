@@ -13,16 +13,19 @@ unsigned short get_toggle_display();
 void set_toggle_display();
 
 unsigned short get_exhibition_mode();
-void set_exhibition_mode(unsigned short newExhibitionMode);
+void set_exhibition_mode(unsigned short new_exhibition_mode);
 
-void set_display_update_speed(unsigned short newUpdateSpeed);
+unsigned short get_display_update_speed();
+void set_display_update_speed(unsigned short new_update_speed);
 
-void toggle_operation_LED();
+unsigned short get_toggle_operation_LED();
+void set_toggle_operation_LED();
 
-unsigned short get_status_color();
-void set_status_color_red();
-void set_status_color_green();
-void set_status_color_blue();
+unsigned short get_status_LED_color();
+void turn_status_LED_off();
+void set_status_LED_color_red();
+void set_status_LED_color_green();
+void set_status_LED_color_blue();
 
 void set_display_red_color(unsigned short red_range);
 void set_display_green_color(unsigned short green_range);
@@ -35,5 +38,7 @@ unsigned short get_sliding_message_times();
 unsigned short get_current_celsius_temperature();
 
 void reset_registers();
+
+void print_registers();
 
 #endif
