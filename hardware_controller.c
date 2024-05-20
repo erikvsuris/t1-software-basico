@@ -53,21 +53,21 @@ char* registers_map(const char* file_path, int file_size, int* fd) {
    unsigned short *base_address = (unsigned short *)map;
 
    r0 = base_address + 0x00;
-   r1 = base_address + 0x02;
-   r2 = base_address + 0x04;
-   r3 = base_address + 0x06;
-   r4 = base_address + 0x08;
-   r5 = base_address + 0x0A;
-   r6 = base_address + 0x0C;
-   r7 = base_address + 0x0E;
-   r8 = base_address + 0x10;
-   r9 = base_address + 0x12;
-   r11 = base_address + 0x16;
-   r10 = base_address + 0x14;
-   r12 = base_address + 0x18;
-   r13 = base_address + 0x1A;
-   r14 = base_address + 0x1C;
-   r15 = base_address + 0x1E;
+   r1 = base_address + 0x01;
+   r2 = base_address + 0x02;
+   r3 = base_address + 0x03;
+   r4 = base_address + 0x04;
+   r5 = base_address + 0x05;
+   r6 = base_address + 0x06;
+   r7 = base_address + 0x07;
+   r8 = base_address + 0x08;
+   r9 = base_address + 0x09;
+   r11 = base_address + 0x0A;
+   r10 = base_address + 0x0B;
+   r12 = base_address + 0x0C;
+   r13 = base_address + 0x0D;
+   r14 = base_address + 0x0E;
+   r15 = base_address + 0x0F;
 
    return map;
 }
@@ -109,7 +109,7 @@ int map_release()
 
 unsigned short int get_toggle_display()
 {
-   return (*r0 >> 0) & 1;
+   return *r0 & 1;
 }
 
 void set_toggle_display()
@@ -132,8 +132,7 @@ void set_exhibition_mode(unsigned short new_exhibition_mode)
 
 unsigned short get_display_update_speed()
 {
-
-   unsigned short mask = *r0 & 256;
+   unsigned short mask = *r0 & (63 << 3);
    return mask >> 3;
 }
 
@@ -147,7 +146,7 @@ void set_display_update_speed(unsigned short new_update_speed)
 }
 
 unsigned short get_toggle_operation_LED() {
-   unsigned short mask = *r0 & 512;
+   unsigned short mask = *r0 & (1 << 9);
    return mask >> 9;
 }
 
@@ -157,8 +156,8 @@ void set_toggle_operation_LED()
 }
 
 unsigned short get_status_LED_color()
-{  
-   unsigned short mask = *r0 & 4096;
+{
+   unsigned short mask = *r0 & (7 << 10);
    return mask >> 10;
 }
 
@@ -169,46 +168,62 @@ void turn_status_LED_off()
 
 void set_status_LED_color_red()
 {
-   *r0 |= 1 << 10;
-   *r0 &= 0 << 11;
-   *r0 &= 0 << 12;
+   *r0 &= ~(1 << 10);
+   *r0 &= ~(1 << 11);
+   *r0 |= 1 << 12;
 }
 void set_status_LED_color_green()
 {
-   *r0 &= 0 << 10;
+   *r0 &= ~(1 << 10);
    *r0 |= 1 << 11;
-   *r0 &= 0 << 12;
+   *r0 &= ~(1 << 12);
 }
 void set_status_LED_color_blue()
 {
-   *r0 &= 0 << 10;
-   *r0 &= 0 << 11;
-   *r0 |= 1 << 12;
+   *r0 |= 1 << 10;
+   *r0 &= ~(1 << 11);
+   *r0 &= ~(1 << 12);
 }
-// Define componente R da color RGB para o display (default: 255).
-void set_display_red_color(unsigned short red_range)
+
+unsigned short get_display_color_red() {
+   unsigned short mask = *r1 & (255 << 0);
+   return mask >> 0;
+}
+
+unsigned short get_display_color_green() {
+   unsigned short mask = *r1 & (255 << 8);
+   return mask >> 8;
+}
+
+unsigned short get_display_color_blue() {
+   unsigned short mask = *r2 & (255 << 0);
+   return mask >> 0;
+}
+
+void set_display_color_red(unsigned short red_range)
 {
-    if (red_range > 255) return;
+   if (red_range > 255) return;
 
    *r1 &= ~(255 << 0);
    *r1 |= (red_range & 255) << 0;
 }
-// Define componente G da color RGB para o display (default: 255).
-void set_display_green_color(unsigned short green_range)
+
+void set_display_color_green(unsigned short green_range)
 {
    if (green_range > 255) return;
 
    *r1 &= ~(255 << 8);
    *r1 |= (green_range & 255) << 8;
 }
-// Define componente B da color RGB para o display (default: 255).
-void set_display_blue_color(unsigned short blue_range)
+
+void set_display_color_blue(unsigned short blue_range)
 {
    if (blue_range > 255) return;
 
    *r2 &= ~(255 << 0);
    *r2 |= (blue_range & 255) << 0;
 }
+
 /*
 Nível da bateria:
 00 = crítico
@@ -218,7 +233,7 @@ Nível da bateria:
 */
 unsigned short get_battery_level()
 {
-   return 0;
+   return *r3 & 3;
 }
 /*
 Número de vezes que a mensagem apareceu de
@@ -243,11 +258,11 @@ unsigned short get_current_celsius_temperature()
 void reset_registers()
 {
    *r0 &= 0;
-   *r0 |= 16;
-   // *r1 &= 0;
-   // *r1 |= 65535;
-   // *r2 &= 0;
-   // *r2 |= 255;
+   *r0 |= 17;
+   *r1 &= 0;
+   *r1 |= 65535;
+   *r2 &= 0;
+   *r2 |= 255;
    // *r3 &= 0;
    // *r4 &= 0;
    // *r5 &= 0;

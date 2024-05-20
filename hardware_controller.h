@@ -27,9 +27,12 @@ void set_status_LED_color_red();
 void set_status_LED_color_green();
 void set_status_LED_color_blue();
 
-void set_display_red_color(unsigned short red_range);
-void set_display_green_color(unsigned short green_range);
-void set_display_blue_color(unsigned short blue_range);
+unsigned short get_display_color_red();
+unsigned short get_display_color_green();
+unsigned short get_display_color_blue();
+void set_display_color_red(unsigned short red_range);
+void set_display_color_green(unsigned short green_range);
+void set_display_color_blue(unsigned short blue_range);
 
 unsigned short get_battery_level();
 

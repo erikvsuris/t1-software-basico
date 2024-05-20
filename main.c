@@ -13,7 +13,9 @@ int main() {
         printf("4 - Ligar/Desligar o LED de operacao\n");
         printf("5 - Ligar/Desligar e definir a cor do LED de status\n");
         printf("6 - Resetar registradores para padrao de fabrica\n");
-        printf("7 - Print\n");
+        printf("7 - Definir cor do display\n");
+        printf("8 - Obter nivel da bateria\n");
+        printf("9 - Print\n");
         printf("0 - Finalizar o programa\n");
         printf("\nSelecione a operacao que deseja realizar: ");
         scanf("%hu", &operation);
@@ -138,7 +140,7 @@ int main() {
                         break;
                     
                     default:
-                        printf("Cor do LED de status invalida!");
+                        printf("Cor do LED de status invalida!\n");
                         break;
                 }
                 break;
@@ -148,6 +150,57 @@ int main() {
                 break;
 
             case 7:
+                printf("\n---------- DISPLAY ----------\n\n");
+                unsigned short red_color = get_display_color_red();
+                unsigned short green_color = get_display_color_green();
+                unsigned short blue_color = get_display_color_blue();
+                printf("Cor do display:\nR=%hu\nG=%hu\nB=%hu\n", red_color, green_color, blue_color);
+                
+                printf("\nDefina a faixa de cor vermelha do display (0-255): ");
+                scanf("%hu", &red_color);
+                if (red_color > 255) printf("Faixa de cor invalida!\n");
+                else set_display_color_red(red_color);
+
+                printf("\nDefina a faixa de cor verde do display (0-255): ");
+                scanf("%hu", &green_color);
+                if (green_color > 255) printf("Faixa de cor invalida!\n");
+                else set_display_color_green(green_color);
+
+                printf("\nDefina a faixa de cor azul do display (0-255): ");
+                scanf("%hu", &blue_color);
+                if (blue_color > 255) printf("Faixa de cor invalida!\n");
+                else set_display_color_blue(blue_color);
+
+                break;
+
+            case 8:
+                unsigned short battery_level = get_battery_level();
+                printf("\nNivel de bateria: ");
+                switch (battery_level)
+                {
+                case 0:
+                    printf("00 - Critico.\n");
+                    break;
+                
+                case 1:
+                    printf("01 - Baixo.\n");
+                    break;
+                
+                case 2:
+                    printf("10 - Medio.\n");
+                    break;
+                
+                case 3:
+                    printf("11 - Alto.\n");
+                    break;
+                
+                default:
+                    printf("Nivel de bateria invalido!\n");
+                    break;
+                }
+                break;
+
+            case 9:
                 print_registers();
                 break;
 
