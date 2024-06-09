@@ -166,23 +166,87 @@ void turn_status_LED_off()
    *r0 &= ~(7 << 10);
 }
 
+void turn_status_LED_on()
+{
+   unsigned int battery_level = get_battery_level();
+   switch (battery_level)
+   {
+      case 0:
+         set_status_LED_color_red();
+         break;
+
+      case 1:
+         set_status_LED_color_yellow();
+         break;
+
+      case 2:
+         set_status_LED_color_green();
+         break;
+      
+      case 3:
+         set_status_LED_color_blue();
+         break;
+      
+      default: break;
+   }
+}
+
 void set_status_LED_color_red()
 {
    *r0 &= ~(1 << 10);
    *r0 &= ~(1 << 11);
    *r0 |= 1 << 12;
 }
+
+void set_status_LED_color_yellow()
+{
+   *r0 &= ~(1 << 10);
+   *r0 |= 1 << 11;
+   *r0 |= 1 << 12;
+}
+
 void set_status_LED_color_green()
 {
    *r0 &= ~(1 << 10);
    *r0 |= 1 << 11;
    *r0 &= ~(1 << 12);
 }
+
 void set_status_LED_color_blue()
 {
    *r0 |= 1 << 10;
    *r0 &= ~(1 << 11);
    *r0 &= ~(1 << 12);
+}
+
+void reset_registers()
+{
+   *r0 &= 0;
+   *r0 |= 17;
+   *r1 &= 0;
+   *r1 |= 65535;
+   *r2 &= 0;
+   *r2 |= 255;
+   *r3 &= 0;
+   *r3 |= 22083;
+   *r4 &= 0;
+   *r4 |= 17736;
+   *r5 &= 0;
+   *r5 |= 19532;
+   *r6 &= 0;
+   *r6 |= 8271;
+   *r7 &= 0;
+   *r7 |= 20311;
+   *r8 &= 0;
+   *r8 |= 21068;
+   *r9 &= 0;
+   *r9 |= 68;
+   *r10 &= 0;
+   *r11 &= 0;
+   *r12 &= 0;
+   *r13 &= 0;
+   *r14 &= 0;
+   *r15 &= 0;
 }
 
 unsigned short get_display_color_red() {
@@ -224,75 +288,57 @@ void set_display_color_blue(unsigned short blue_range)
    *r2 |= (blue_range & 255) << 0;
 }
 
-/*
-Nível da bateria:
-00 = crítico
-01 = baixo
-10 = médio
-11 = alto
-*/
 unsigned short get_battery_level()
 {
    return *r3 & 3;
 }
+
 /*
 Número de vezes que a mensagem apareceu de
 forma completa no display no modo deslizante
 */
 unsigned short get_sliding_message_times()
 {  
-   return 0;
+   unsigned short mask = *r3 & (15 << 2);
+   return mask >> 2;
 }
 
-/*
-Temperatura atual em graus Celsius vezes 10
-(por exemplo, valor decimal 323 representa 32,2
-graus). Valores negativos são representados em
-complemento de 2
-*/
-unsigned short get_current_celsius_temperature()
+float get_current_temperature()
 { 
-   return 0;
-}
-// Reseta registradores para padrão de fábrica (default)
-void reset_registers()
-{
-   *r0 &= 0;
-   *r0 |= 17;
-   *r1 &= 0;
-   *r1 |= 65535;
-   *r2 &= 0;
-   *r2 |= 255;
-   // *r3 &= 0;
-   // *r4 &= 0;
-   // *r5 &= 0;
-   // *r6 &= 0;
-   // *r7 &= 0;
-   // *r8 &= 0;
-   // *r9 &= 0;
-   // *r10 &= 0;
-   // *r11 &= 0;
-   // *r12 &= 0;
-   // *r13 &= 0;
-   // *r14 &= 0;
-   // *r15 &= 0;
+   unsigned short bin_current_temperature = (*r3 & (1023 << 6)) >> 6;
+   double current_temperature = (double)bin_current_temperature / 10;
+   if ((bin_current_temperature >> 9) == 1) return -current_temperature;
+   else return current_temperature;
 }
 
 void print_registers() {
-   printf("\n%d",*r0);
-   printf("\n%d",*r1);
-   printf("\n%d",*r2);
-   printf("\n%d",*r3);
-   printf("\n%d",*r4);
-   printf("\n%d",*r5);
-   printf("\n%d",*r6);
-   printf("\n%d",*r7);
-   printf("\n%d",*r8);
-   printf("\n%d",*r9);
-   printf("\n%d",*r10);
-   printf("\n%d",*r11);
-   printf("\n%d",*r12);
-   printf("\n%d",*r13);
-   printf("\n%d",*r14);
-   printf("\n%d",*r15);
+   printf("\n%hu",*r0);
+   printf("\n%hu",*r1);
+   printf("\n%hu",*r2);
+   printf("\n%hu",*r3);
+   printf("\n%hu",*r4);
+   printf("\n%hu",*r5);
+   printf("\n%hu",*r6);
+   printf("\n%hu",*r7);
+   printf("\n%hu",*r8);
+   printf("\n%hu",*r9);
+   printf("\n%hu",*r10);
+   printf("\n%hu",*r11);
+   printf("\n%hu",*r12);
+   printf("\n%hu",*r13);
+   printf("\n%hu",*r14);
+   printf("\n%hu",*r15);
+}
+
+void get_display_characters(char display_characters[]) {
+   for (int i = 0; i < 24; i++) {
+      display_characters[i] = *((char *)r4 + i);
+   }
+}
+
+void set_display_characters(char new_display_characters[]) {
+   for (int i = 0; i < 24; i++) {
+      *(r4 + i) = 0; 
+      *((char *)r4 + i) = new_display_characters[i];
+   }
 }

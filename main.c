@@ -15,7 +15,10 @@ int main() {
         printf("6 - Resetar registradores para padrao de fabrica\n");
         printf("7 - Definir cor do display\n");
         printf("8 - Obter nivel da bateria\n");
-        printf("9 - Print\n");
+        printf("9 - Obter temperatura atual\n");
+        printf("10 - Obter numero de vezes que a mensagem apareceu\n");
+        printf("11 - Definir caracteres do display\n");
+        printf("12 - Print\n");
         printf("0 - Finalizar o programa\n");
         printf("\nSelecione a operacao que deseja realizar: ");
         scanf("%hu", &operation);
@@ -39,7 +42,7 @@ int main() {
                 switch (exhibition_mode)
                 {
                     case 0:
-                        printf("00 - Estático.\n\n");
+                        printf("00 - Estatico.\n\n");
                         break;
                     
                     case 1:
@@ -92,55 +95,49 @@ int main() {
             case 5:
                 printf("\n---------- LED DE STATUS ----------\n\n");
                 unsigned short status_LED = get_status_LED_color();
-                printf("Estado e Cor do LED de status atual: ");
+                printf("Estado atual do LED de status: ");
                 switch (status_LED)
                 {
                     case 0:
-                        printf("000 - Desligado.\n\n");
+                        printf("Desligado.\n\n");
                         break;
 
                     case 1:
-                        printf("001 - Ligado Vermelho.\n\n");
+                        printf("Ligado Azul.\n\n");
                         break;
                     
                     case 2:
-                        printf("010 - Ligado Verde.\n\n");
+                        printf("Ligado Verde.\n\n");
+                        break;
+
+                    case 3:
+                        printf("Ligado Amarelo.\n\n");
                         break;
                     
                     case 4:
-                        printf("100 - Ligado Azul.\n\n");
+                        printf("Ligado Vermelho.\n\n");
                         break;
                     
                     default:
                         printf("Cor do LED de status invalida!\n\n");
                         break;
                 }
-                printf("1 - Ligar Vermelho\n");
-                printf("2 - Ligar Verde\n");
-                printf("3 - Ligar Azul\n");
-                printf("4 - Desligar\n");
+                printf("1 - Ligar\n");
+                printf("2 - Desligar\n");
                 printf("\nSelecione a operacao que deseja realizar: ");
                 scanf("%hu", &status_LED);
                 switch (status_LED)
                 {
                     case 1:
-                        set_status_LED_color_red();
+                        turn_status_LED_on();
                         break;
 
                     case 2:
-                        set_status_LED_color_green();
-                        break;
-                    
-                    case 3:
-                        set_status_LED_color_blue();
-                        break;
-                    
-                    case 4:
                         turn_status_LED_off();
                         break;
                     
                     default:
-                        printf("Cor do LED de status invalida!\n");
+                        printf("Operacao invalida!\n");
                         break;
                 }
                 break;
@@ -201,7 +198,33 @@ int main() {
                 break;
 
             case 9:
+                float current_temperature = get_current_temperature();
+                printf("\nTemperatura atual em celsius: %.1f ºC.\n", current_temperature);
+
+                break;
+
+            case 10:
+                unsigned short sliding_message_times = get_sliding_message_times();
+                printf("\nNumero de vezes que a mensagem apareceu: %hu.\n", sliding_message_times);
+
+                break;
+
+            case 11:
+                printf("\n------- DISPLAY CHARACTERS -------\n");
+                char current_display_characters[24];
+                get_display_characters(current_display_characters);
+                printf("\nEstado atual dos caracteres do display: %s.\n", current_display_characters);
+
+                char new_display_characters[24];
+                printf("\nDefina a mensagem do display (24 caracteres): ");
+                fgets(new_display_characters, sizeof(new_display_characters), stdin); 
+                scanf("%[^\n]s", new_display_characters);
+                set_display_characters(new_display_characters);
+
+                break;
+            case 12:
                 print_registers();
+
                 break;
 
             default:
