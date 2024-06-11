@@ -1,30 +1,28 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -I.
+CFLAGS = -Wall -Wextra
+PROG = main
 SRC = main.c hardware_controller.c
-TARGET = main
 OBJ = $(SRC:.c=.o)
+STATIC_LIB = hardware_controller.a
+DYNAMIC_LIB = hardware_controller.so
 
-STATIC_LIBRARY = hardware_controller.a
-DYNAMIC_LIBRARY = hardware_controller.so
+hardware_controller_pic.o: hardware_controller.c
+	$(CC) $(CFLAGS) -fPIC -c hardware_controller.c -o hardware_controller_pic.o
 
-all: $(TARGET)
+$(STATIC_LIB): hardware_controller.o
+	ar rcs $(STATIC_LIB) hardware_controller.o
 
-$(TARGET): $(OBJ) $(STATIC_LIBRARY) $(DYNAMIC_LIBRARY)
-	$(CC) $(CFLAGS) -o $@ main.o -L. -hardware_controller
+$(DYNAMIC_LIB): hardware_controller_pic.o
+	gcc -shared -o $(DYNAMIC_LIB) hardware_controller_pic.o
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+static: $(STATIC_LIB) $(PROG)
 
-$(STATIC_LIBRARY): hardware_controller.o
-	ar rcs $@ $^
+dynamic: $(DYNAMIC_LIB) $(PROG)
 
-$(DYNAMIC_LIBRARY): hardware_controller.o
-	$(CC) -fPIC -shared -o $@ $^
+$(PROG): $(OBJ)
+	$(CC) $(CFLAGS) -o $(PROG) $(OBJ)
 
-# make run
-run: $(TARGET)
-	LD_LIBRARY_PATH=. ./$(TARGET)
+run: $(PROG)
+	./$(PROG)
 
-# make clean
 clean:
-	rm -f $(OBJ) $(TARGET) $(STATIC_LIBRARY) $(DYNAMIC_LIBRARY)
+	rm -f *.o *.so *.a $(PROG)
